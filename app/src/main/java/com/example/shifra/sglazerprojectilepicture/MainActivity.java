@@ -1,6 +1,7 @@
 package com.example.shifra.sglazerprojectilepicture;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -22,9 +23,11 @@ public class MainActivity extends AppCompatActivity {
     private double timeValue;
     private double velocityValue;
     private ImageView imageView;
+    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences= this.getSharedPreferences("DEFAULT",MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.imageView);
         Picasso.with(this).load("http://images.tutorcircle.com/cms/images/83/projectile-motion111.PNG").into(imageView);
@@ -41,6 +44,25 @@ public class MainActivity extends AppCompatActivity {
                 calculateAnswer();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        angle.setText(preferences.getString("ANGLE",""));
+        velocity.setText(preferences.getString("VELOCITY",""));
+        time.setText(preferences.getString("TIME",""));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor editor= preferences.edit();
+        editor.putString("ANGLE",angle.getText().toString());
+        editor.putString("VELOCITY",velocity.getText().toString());
+        editor.putString("TIME",time.getText().toString());
+
+        editor.apply();
     }
 
     private void calculateAnswer() {
